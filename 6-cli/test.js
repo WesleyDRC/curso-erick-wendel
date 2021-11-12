@@ -31,4 +31,10 @@ describe('Suite de manipulação de Heróis', () => {
         deepEqual(actual, expected)
     })   
 
+    it('deve remover heroi por id ', async () => {
+        const expected = true;
+        const resultado = await database.remover(DEFAULT_ITEM_CADASTRAR.id)
+        deepEqual(resultado, expected)
+    })
+
 })
