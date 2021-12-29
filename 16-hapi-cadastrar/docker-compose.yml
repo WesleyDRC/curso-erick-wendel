@@ -1,0 +1,59 @@
+version: "3"
+
+volumes:
+  data:
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports: 
+      - "5432:5432"
+    environment: 
+      POSTGRES_USER: "adminpost"
+      POSTGRES_PASSWORD: "adminpost"
+      POSTGRES_DB: "heroes"
+    networks:
+      - pgnet
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  mongo:
+    container_name: mongodb
+    image: mongo:4
+    ports: 
+      - "27017:27017"
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: "adminmongo"
+      MONGO_INITDB_ROOT_PASSWORD: "adminmongo"
+      MONGO_INITDB_DATABASE: "heroes"
+    networks:
+      - mongonet
+    volumes:
+      - data:/data/db
+    
+  adminer:
+    image: adminer
+    ports: 
+      - "8080:8080"
+    depends_on: 
+      - postgres
+    networks:
+      - pgnet
+
+  mongoclient:
+    image: mongoclient/mongoclient
+    ports: 
+      - "3000:3000"
+    depends_on: 
+      - mongo
+    environment:
+      STARTUP_DELAY: 10
+      MONGO_URL: "mongodb://adminmongo:adminmongo@mongo:27017/admin"
+    networks:
+      - mongonet
+
+
+networks:
+  pgnet:
+  mongonet:
